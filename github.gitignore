@@ -1,0 +1,24 @@
+
+
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Variables de entorno (IMPORTANTE - no subir contraseñas)
+.env
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Base de datos local
+nfc_service/local_store.db
+
+# Kiro
+.kiro/

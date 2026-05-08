@@ -1,0 +1,102 @@
+PS C:\Users\chaoh\Desktop\MARKETPLACE TAREAS\backend> pytest -v
+============================================================================================= test session starts ==============================================================================================
+platform win32 -- Python 3.12.10, pytest-8.2.0, pluggy-1.6.0 -- C:\Users\chaoh\AppData\Local\Programs\Python\Python312\python.exe
+cachedir: .pytest_cache
+hypothesis profile 'default' -> database=DirectoryBasedExampleDatabase(WindowsPath('C:/Users/chaoh/Desktop/MARKETPLACE TAREAS/backend/.hypothesis/examples'))
+rootdir: C:\Users\chaoh\Desktop\MARKETPLACE TAREAS\backend
+configfile: pytest.ini
+testpaths: tests
+plugins: anyio-4.13.0, hypothesis-6.100.5, asyncio-0.23.6
+asyncio: mode=Mode.STRICT
+collected 76 items
+
+tests/test_auth.py::TestLogin::test_login_exitoso PASSED                                                                                                                                                  [  1%]
+tests/test_auth.py::TestLogin::test_credenciales_incorrectas_usuario_malo PASSED                                                                                                                          [  2%]
+tests/test_auth.py::TestLogin::test_credenciales_incorrectas_password_mala PASSED                                                                                                                         [  3%]
+tests/test_auth.py::TestLogin::test_mensaje_error_generico_igual_en_ambos_casos PASSED                                                                                                                    [  5%]
+tests/test_auth.py::TestLogin::test_bloqueo_ip_tras_cinco_fallos PASSED                                                                                                                                   [  6%]
+tests/test_auth.py::TestLogin::test_login_exitoso_resetea_contador PASSED                                                                                                                                 [  7%]
+tests/test_auth.py::TestLogout::test_logout_invalida_token PASSED                                                                                                                                         [  9%]
+tests/test_auth.py::TestLogout::test_logout_sin_token_rechazado PASSED                                                                                                                                    [ 10%]
+tests/test_auth.py::TestEndpointsProtegidos::test_sin_token_devuelve_401_o_403 PASSED                                                                                                                     [ 11%]
+tests/test_auth.py::TestEndpointsProtegidos::test_token_malformado_rechazado PASSED                                                                                                                       [ 13%]
+tests/test_auth.py::TestEndpointsProtegidos::test_token_valido_permite_acceso PASSED                                                                                                                      [ 14%]
+tests/test_checkins.py::TestCheckinIndividual::test_primer_fichaje_es_entrada PASSED                                                                                                                      [ 15%]
+tests/test_checkins.py::TestCheckinIndividual::test_alternancia_entrada_salida PASSED                                                                                                                     [ 17%]
+tests/test_checkins.py::TestCheckinIndividual::test_token_desconocido_devuelve_403 PASSED                                                                                                                 [ 18%]
+tests/test_checkins.py::TestCheckinIndividual::test_token_desconocido_registra_failed_attempt PASSED                                                                                                      [ 19%]
+tests/test_checkins.py::TestCheckinIndividual::test_worker_desactivado_rechazado PASSED                                                                                                                   [ 21%]
+tests/test_checkins.py::TestCheckinIndividual::test_worker_desactivado_no_crea_checkin PASSED                                                                                                             [ 22%]
+tests/test_checkins.py::TestCheckinIndividual::test_idempotencia_mismo_key_mismo_resultado PASSED                                                                                                         [ 23%]
+tests/test_checkins.py::TestCheckinIndividual::test_sin_auth_rechazado PASSED                                                                                                                             [ 25%]
+tests/test_checkins.py::TestCheckinIndividual::test_device_token_invalido_rechazado PASSED                                                                                                                [ 26%]
+tests/test_checkins.py::TestSyncCheckins::test_sync_lote_basico PASSED                                                                                                                                    [ 27%]
+tests/test_checkins.py::TestSyncCheckins::test_sync_idempotencia PASSED                                                                                                                                   [ 28%]
+tests/test_checkins.py::TestSyncCheckins::test_sync_token_desconocido_cuenta_como_rechazado PASSED                                                                                                        [ 30%]
+tests/test_checkins.py::TestSyncCheckins::test_sync_sin_auth_rechazado PASSED                                                                                                                             [ 31%]
+tests/test_integration.py::TestFlujoCompletoFichaje::test_fichaje_valido_crea_registro_en_db PASSED                                                                                                       [ 32%]
+tests/test_integration.py::TestFlujoCompletoFichaje::test_alternancia_completa_tres_fichajes PASSED                                                                                                       [ 34%]
+tests/test_integration.py::TestFlujoCompletoFichaje::test_token_desconocido_403_y_failed_attempt PASSED                                                                                                   [ 35%]
+tests/test_integration.py::TestFlujoCompletoFichaje::test_worker_desactivado_no_genera_registro PASSED                                                                                                    [ 36%]
+tests/test_integration.py::TestFlujoCompletoFichaje::test_dos_trabajadores_alternan_independientemente PASSED                                                                                             [ 38%]
+tests/test_integration.py::TestFlujoOfflineSync::test_sync_batch_crea_registros_correctos PASSED                                                                                                          [ 39%]
+tests/test_integration.py::TestFlujoOfflineSync::test_sync_idempotencia_mismo_lote_tres_veces PASSED                                                                                                      [ 40%]
+tests/test_integration.py::TestFlujoOfflineSync::test_sync_mixto_validos_e_invalidos PASSED                                                                                                               [ 42%]
+tests/test_integration.py::TestFlujoAutenticacion::test_login_acceso_logout_deniega PASSED                                                                                                                [ 43%]
+tests/test_integration.py::TestFlujoAutenticacion::test_bloqueo_ip_restaura_tras_login_exitoso PASSED                                                                                                     [ 44%]
+tests/test_integration.py::TestFlujoCSVFidelidad::test_csv_coincide_exactamente_con_consulta_filtrada PASSED                                                                                              [ 46%]
+tests/test_integration.py::TestFlujoCSVFidelidad::test_csv_sin_filtros_incluye_todos PASSED                                                                                                               [ 47%]
+tests/test_query_export.py::TestListCheckins::test_lista_todos_los_registros PASSED                                                                                                                       [ 48%]
+tests/test_query_export.py::TestListCheckins::test_orden_descendente_por_fecha PASSED                                                                                                                     [ 50%]
+tests/test_query_export.py::TestListCheckins::test_filtro_por_worker_id PASSED                                                                                                                            [ 51%]
+tests/test_query_export.py::TestListCheckins::test_filtro_por_event_type PASSED                                                                                                                           [ 52%]
+tests/test_query_export.py::TestListCheckins::test_paginacion PASSED                                                                                                                                      [ 53%]
+tests/test_query_export.py::TestListCheckins::test_incluye_worker_name PASSED                                                                                                                             [ 55%]
+tests/test_query_export.py::TestListCheckins::test_sin_auth_rechazado PASSED                                                                                                                              [ 56%]
+tests/test_query_export.py::TestExportCSV::test_exportacion_csv_basica PASSED                                                                                                                             [ 57%]
+tests/test_query_export.py::TestExportCSV::test_csv_contiene_cabeceras_correctas PASSED                                                                                                                   [ 59%]
+tests/test_query_export.py::TestExportCSV::test_csv_fidelidad_respecto_a_consulta PASSED                                                                                                                  [ 60%]
+tests/test_query_export.py::TestExportCSV::test_csv_filtro_event_type PASSED                                                                                                                              [ 61%]
+tests/test_query_export.py::TestExportCSV::test_sin_auth_rechazado PASSED                                                                                                                                 [ 63%]
+tests/test_query_export.py::TestAuditLog::test_log_auditoria_vacio_inicial PASSED                                                                                                                         [ 64%]
+tests/test_query_export.py::TestAuditLog::test_operaciones_generan_entradas PASSED                                                                                                                        [ 65%]
+tests/test_query_export.py::TestAuditLog::test_orden_descendente PASSED                                                                                                                                   [ 67%]
+tests/test_query_export.py::TestAuditLog::test_sin_auth_rechazado PASSED                                                                                                                                  [ 68%]
+tests/test_security.py::TestProteccionJWT::test_sin_token_todos_los_endpoints_rechazan PASSED                                                                                                             [ 69%]
+tests/test_security.py::TestProteccionJWT::test_token_malformado_rechazado PASSED                                                                                                                         [ 71%]
+tests/test_security.py::TestProteccionJWT::test_token_firma_invalida_rechazado PASSED                                                                                                                     [ 72%]
+tests/test_security.py::TestProteccionJWT::test_token_valido_permite_acceso PASSED                                                                                                                        [ 73%]
+tests/test_security.py::TestMensajeErrorGenerico::test_usuario_malo_vs_password_mala_mismo_mensaje PASSED                                                                                                 [ 75%]
+tests/test_security.py::TestMensajeErrorGenerico::test_error_no_revela_campo_incorrecto PASSED                                                                                                            [ 76%]
+tests/test_security.py::TestInmutabilidadFichajes::test_no_existe_endpoint_delete_checkins PASSED                                                                                                         [ 77%]
+tests/test_workers.py::TestListWorkers::test_lista_vacia_inicial PASSED                                                                                                                                   [ 78%]
+tests/test_workers.py::TestListWorkers::test_lista_trabajadores_creados PASSED                                                                                                                            [ 80%]
+tests/test_workers.py::TestListWorkers::test_sin_auth_rechazado PASSED                                                                                                                                    [ 81%]
+tests/test_workers.py::TestCreateWorker::test_crear_trabajador_nuevo PASSED                                                                                                                               [ 82%]
+tests/test_workers.py::TestCreateWorker::test_employee_id_duplicado_rechazado PASSED                                                                                                                      [ 84%]
+tests/test_workers.py::TestCreateWorker::test_token_nfc_duplicado_rechazado PASSED                                                                                                                        [ 85%]
+tests/test_workers.py::TestCreateWorker::test_crear_genera_entrada_audit_log PASSED                                                                                                                       [ 86%]
+tests/test_workers.py::TestUpdateWorker::test_actualizar_nombre PASSED                                                                                                                                    [ 88%]
+tests/test_workers.py::TestUpdateWorker::test_actualizar_worker_inexistente_404 PASSED                                                                                                                    [ 89%]
+tests/test_workers.py::TestDeactivateWorker::test_desactivar_trabajador PASSED                                                                                                                            [ 90%]
+tests/test_workers.py::TestDeactivateWorker::test_desactivar_dos_veces_409 PASSED                                                                                                                         [ 92%]
+tests/test_workers.py::TestDeactivateWorker::test_desactivar_conserva_historico_fichajes PASSED                                                                                                           [ 93%]
+tests/test_workers.py::TestDeactivateWorker::test_desactivar_genera_audit_log PASSED                                                                                                                      [ 94%]
+tests/test_workers.py::TestAssignNfcToken::test_asignar_token_nuevo PASSED                                                                                                                                [ 96%]
+tests/test_workers.py::TestAssignNfcToken::test_token_duplicado_409 PASSED                                                                                                                                [ 97%]
+tests/test_workers.py::TestAssignNfcToken::test_asignar_token_a_worker_inactivo_409 PASSED                                                                                                                [ 98%]
+tests/test_workers.py::TestAssignNfcToken::test_asignar_genera_audit_log PASSED                                                                                                                           [100%]
+
+=============================================================================================== warnings summary ===============================================================================================
+tests/test_auth.py: 5 warnings
+tests/test_checkins.py: 15 warnings
+tests/test_integration.py: 20 warnings
+tests/test_query_export.py: 39 warnings
+tests/test_security.py: 3 warnings
+tests/test_workers.py: 32 warnings
+  C:\Users\chaoh\AppData\Local\Programs\Python\Python312\Lib\site-packages\jose\jwt.py:311: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+    now = timegm(datetime.utcnow().utctimetuple())
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================================================================================== 76 passed, 114 warnings in 53.75s =======================================================================================
+PS C:\Users\chaoh\Desktop\MARKETPLACE TAREAS\backend>

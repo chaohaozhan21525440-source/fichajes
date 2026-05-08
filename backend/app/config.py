@@ -25,14 +25,33 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def build_database_url(self):
-        if not self.database_url:
-            self.database_url = (
+        import os
+        # Leer directamente de os.environ para no depender del orden de carga de pydantic-settings
+        url = os.environ.get("DATABASE_URL", "").strip()
+
+        if not url:
+            # Fallback: Railway también inyecta PGHOST, PGPORT, PGUSER, PGPASSWORD, PGDATABASE
+            pg_host = os.environ.get("PGHOST", "")
+            pg_port = os.environ.get("PGPORT", "5432")
+            pg_user = os.environ.get("PGUSER", "")
+            pg_password = os.environ.get("PGPASSWORD", "")
+            pg_db = os.environ.get("PGDATABASE", "")
+
+            if pg_host and pg_user and pg_password and pg_db:
+                url = f"postgresql://{pg_user}:{pg_password}@{pg_host}:{pg_port}/{pg_db}"
+
+        if not url:
+            # Último fallback: variables individuales DB_* (dev local)
+            url = (
                 f"postgresql://{self.db_user}:{self.db_password}"
                 f"@{self.db_host}:{self.db_port}/{self.db_name}"
             )
-        # Railway a veces devuelve postgres:// en lugar de postgresql://
-        if self.database_url.startswith("postgres://"):
-            self.database_url = "postgresql://" + self.database_url[len("postgres://"):]
+
+        # Railway a veces usa postgres:// en lugar de postgresql://
+        if url.startswith("postgres://"):
+            url = "postgresql://" + url[len("postgres://"):]
+
+        self.database_url = url
         return self
 
     model_config = {"env_file": ".env"}

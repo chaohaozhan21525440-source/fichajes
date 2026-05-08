@@ -19,7 +19,15 @@ from app.config import settings
 def seed():
     db = SessionLocal()
     try:
-        if db.query(Admin).count() > 0:
+        existing = db.query(Admin).filter(Admin.username == settings.admin_username).first()
+
+        if existing:
+            if settings.admin_password:
+                existing.password_hash = hash_password(settings.admin_password)
+                db.commit()
+                print(f"Contraseña de '{settings.admin_username}' actualizada.", flush=True)
+            else:
+                print("Admin ya existe, no se modifica.", flush=True)
             return
 
         password = settings.admin_password

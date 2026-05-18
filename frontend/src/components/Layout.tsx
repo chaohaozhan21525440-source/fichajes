@@ -2,11 +2,12 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const links = [
-  { to: '/',               label: '🏠 Inicio' },
-  { to: '/checkins',       label: '🕐 Fichajes' },
-  { to: '/late-arrivals',  label: '⏰ Retrasos' },
-  { to: '/workers',        label: '👥 Trabajadores' },
-  { to: '/audit',          label: '📋 Auditoría' },
+  { to: '/',               label: 'Inicio',         icon: '🏠' },
+  { to: '/checkins',       label: 'Fichajes',       icon: '🕐' },
+  { to: '/late-arrivals',  label: 'Retrasos',       icon: '⏰' },
+  { to: '/workers',        label: 'Trabajadores',   icon: '👥' },
+  { to: '/audit',          label: 'Auditoría',      icon: '📋' },
+  { to: '/settings',       label: 'Configuración',  icon: '⚙️' },
 ]
 
 export default function Layout() {
@@ -14,7 +15,13 @@ export default function Layout() {
   return (
     <div className="layout">
       <aside className="sidebar">
-        <div className="sidebar-brand">Fichajes NFC</div>
+        <div className="sidebar-brand">
+          <img src="/logo.svg" alt="Logo" />
+          <div className="sidebar-brand-text">
+            <strong>Fichajes</strong>
+            <small>NFC</small>
+          </div>
+        </div>
         <nav>
           {links.map((l) => (
             <NavLink
@@ -23,7 +30,8 @@ export default function Layout() {
               end={l.to === '/'}
               className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
             >
-              {l.label}
+              <span>{l.icon}</span>
+              <span>{l.label}</span>
             </NavLink>
           ))}
         </nav>

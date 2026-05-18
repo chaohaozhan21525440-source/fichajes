@@ -8,6 +8,7 @@ import Checkins from './pages/Checkins'
 import Workers from './pages/Workers'
 import Audit from './pages/Audit'
 import LateArrivals from './pages/LateArrivals'
+import Settings from './pages/Settings'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="late-arrivals" element={<LateArrivals />} />
             <Route path="workers" element={<Workers />} />
             <Route path="audit" element={<Audit />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

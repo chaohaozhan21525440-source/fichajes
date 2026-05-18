@@ -27,6 +27,9 @@ export default function Login() {
   return (
     <div className="login-wrap">
       <div className="login-card">
+        <div className="login-logo">
+          <img src="/logo.svg" alt="Logo" />
+        </div>
         <h1 className="login-title">Fichajes NFC</h1>
         <p className="login-sub">Panel de administración</p>
         {error && <div className="error-msg">{error}</div>}

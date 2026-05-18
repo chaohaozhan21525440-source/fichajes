@@ -68,3 +68,10 @@ export interface LateArrivalsReport {
   by_worker: LateArrivalWorkerSummary[]
   summary: LateArrivalSummary
 }
+
+// ── Configuración persistida del cliente (/api/v1/settings) ──
+export interface AppSettings {
+  expected_entry_time: string  // HH:MM
+  expected_exit_time: string   // HH:MM
+  grace_minutes: number
+}

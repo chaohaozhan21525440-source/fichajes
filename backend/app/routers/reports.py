@@ -19,6 +19,7 @@ from app.database import get_db
 from app.models.admin import Admin
 from app.models.checkin_record import CheckinRecord
 from app.models.worker import Worker
+from app.routers.settings import read_settings_dict
 from app.schemas.late_arrival import (
     LateArrivalItem,
     LateArrivalSummary,
@@ -47,8 +48,8 @@ def _parse_hhmm(s: str) -> time:
 def late_arrivals_report(
     from_date: date = Query(..., alias="from", description="Inicio del rango (inclusive, fecha local)"),
     to_date: date = Query(..., alias="to", description="Fin del rango (inclusive, fecha local)"),
-    expected_time: str = Query("09:00", description="Hora esperada de entrada HH:MM (tz local)"),
-    grace_minutes: int = Query(0, ge=0, le=240, description="Tolerancia en minutos antes de considerar tarde"),
+    expected_time: Optional[str] = Query(None, description="Hora esperada HH:MM (default: app_settings.expected_entry_time)"),
+    grace_minutes: Optional[int] = Query(None, ge=0, le=240, description="Tolerancia (default: app_settings.grace_minutes)"),
     worker_id: Optional[UUID] = Query(None, description="Filtrar a un solo trabajador"),
     tz: str = Query("Europe/Madrid", description="IANA timezone, por defecto Europa/Madrid"),
     db: Session = Depends(get_db),
@@ -74,6 +75,15 @@ def late_arrivals_report(
             status_code=400,
             detail={"error": "invalid_range", "message": "'to' debe ser >= 'from'"},
         )
+
+    # Si el caller no manda expected_time / grace_minutes, leer defaults persistidos
+    # desde app_settings — así la página puede llamar al endpoint "limpio" y el
+    # cliente lo configura una vez desde Settings.
+    persisted = read_settings_dict(db)
+    if expected_time is None:
+        expected_time = persisted.expected_entry_time
+    if grace_minutes is None:
+        grace_minutes = persisted.grace_minutes
 
     expected = _parse_hhmm(expected_time)
     try:

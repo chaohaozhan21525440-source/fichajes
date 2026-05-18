@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, workers, checkins, export, audit
+from app.routers import auth, workers, checkins, export, audit, reports
 from app.config import settings
 
 app = FastAPI(title="Employee Time Tracking API", version="1.0.0")
@@ -20,6 +20,7 @@ app.include_router(workers.router)
 app.include_router(checkins.router)
 app.include_router(export.router)
 app.include_router(audit.router)
+app.include_router(reports.router)
 
 
 @app.get("/health")

@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Checkins from './pages/Checkins'
 import Workers from './pages/Workers'
 import Audit from './pages/Audit'
+import LateArrivals from './pages/LateArrivals'
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="checkins" element={<Checkins />} />
+            <Route path="late-arrivals" element={<LateArrivals />} />
             <Route path="workers" element={<Workers />} />
             <Route path="audit" element={<Audit />} />
           </Route>

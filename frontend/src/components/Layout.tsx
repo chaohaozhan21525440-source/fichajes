@@ -2,10 +2,11 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const links = [
-  { to: '/',         label: '🏠 Inicio' },
-  { to: '/checkins', label: '🕐 Fichajes' },
-  { to: '/workers',  label: '👥 Trabajadores' },
-  { to: '/audit',    label: '📋 Auditoría' },
+  { to: '/',               label: '🏠 Inicio' },
+  { to: '/checkins',       label: '🕐 Fichajes' },
+  { to: '/late-arrivals',  label: '⏰ Retrasos' },
+  { to: '/workers',        label: '👥 Trabajadores' },
+  { to: '/audit',          label: '📋 Auditoría' },
 ]
 
 export default function Layout() {

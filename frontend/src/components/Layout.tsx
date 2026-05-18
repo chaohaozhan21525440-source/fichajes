@@ -16,12 +16,16 @@ export default function Layout() {
     <div className="layout">
       <aside className="sidebar">
         <div className="sidebar-brand">
-          <img src="/logo.svg" alt="Logo" />
+          <div className="sidebar-brand-logo">
+            <img src="/logo.png" alt="Logo" />
+          </div>
           <div className="sidebar-brand-text">
             <strong>Fichajes</strong>
-            <small>NFC</small>
+            <small>Panel admin</small>
           </div>
         </div>
+
+        <div className="sidebar-section">Menú</div>
         <nav>
           {links.map((l) => (
             <NavLink
@@ -30,11 +34,12 @@ export default function Layout() {
               end={l.to === '/'}
               className={({ isActive }) => 'nav-link' + (isActive ? ' active' : '')}
             >
-              <span>{l.icon}</span>
+              <span className="nav-icon">{l.icon}</span>
               <span>{l.label}</span>
             </NavLink>
           ))}
         </nav>
+
         <button className="btn btn-outline sidebar-logout" onClick={logout}>
           Cerrar sesión
         </button>

@@ -56,7 +56,10 @@ export default function Settings() {
 
   return (
     <div>
-      <h1 className="page-title"><span className="accent" />Configuración</h1>
+      <h1 className="page-title">Configuración</h1>
+      <p className="page-subtitle">
+        Define el horario laboral. Estos valores se aplican por defecto al informe de retrasos.
+      </p>
 
       <div className="card" style={{ maxWidth: 640 }}>
         <h2 className="section-title">Horario laboral</h2>

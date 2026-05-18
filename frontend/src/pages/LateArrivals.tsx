@@ -115,30 +115,18 @@ export default function LateArrivals() {
 
   return (
     <div>
-      <h1 className="page-title"><span className="accent" />Retrasos</h1>
+      <h1 className="page-title">Retrasos</h1>
+      <p className="page-subtitle">
+        Quién llega tarde y cuánto. Solo se cuentan las primeras entradas del día por encima de la hora esperada + tolerancia.
+      </p>
 
       {/* ── Banner criterio actual ─────────────────────────────────── */}
-      <div
-        className="card"
-        style={{
-          marginBottom: '1rem',
-          display: 'flex',
-          gap: '1rem',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          background: 'linear-gradient(90deg, var(--brand-soft) 0%, #fff 70%)',
-          borderColor: '#FECACA',
-        }}
-      >
-        <div style={{ flex: 1, minWidth: 240 }}>
-          <div style={{ fontSize: '.78rem', color: 'var(--ink-500)', fontWeight: 600, letterSpacing: '.04em', textTransform: 'uppercase' }}>
-            Criterio aplicado
-          </div>
-          <div style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--ink-900)', marginTop: '.25rem' }}>
-            Entrada esperada{' '}
-            <span style={{ fontFamily: 'monospace', color: 'var(--brand-dark)' }}>{effectiveExpected}</span>
-            {' '}· tolerancia{' '}
-            <span style={{ fontFamily: 'monospace', color: 'var(--brand-dark)' }}>{effectiveGrace} min</span>
+      <div className="banner">
+        <div className="banner-content">
+          <div className="banner-eyebrow">Criterio aplicado</div>
+          <div className="banner-main">
+            Entrada esperada <span className="mono" style={{ color: 'var(--brand-dark)' }}>{effectiveExpected}</span>
+            {' · '}tolerancia <span className="mono" style={{ color: 'var(--brand-dark)' }}>{effectiveGrace} min</span>
             {(overrideExpected || overrideGrace) && (
               <span className="badge badge-brand" style={{ marginLeft: '.5rem' }}>override</span>
             )}
@@ -207,27 +195,27 @@ export default function LateArrivals() {
       {/* ── Tarjetas resumen ──────────────────────────────────────── */}
       {data && (
         <div className="stats-grid">
-          <div className="stat-card stat-card-accent">
-            <div className="stat-value is-brand">{data.summary.total_late_events}</div>
+          <div className="stat-card">
             <div className="stat-label">Retrasos detectados</div>
+            <div className="stat-value is-brand">{data.summary.total_late_events}</div>
           </div>
           <div className="stat-card">
-            <div className="stat-value">{fmtMinutes(data.summary.total_late_minutes)}</div>
             <div className="stat-label">Tiempo total acumulado</div>
+            <div className="stat-value">{fmtMinutes(data.summary.total_late_minutes)}</div>
           </div>
           <div className="stat-card">
+            <div className="stat-label">Trabajadores afectados</div>
             <div className="stat-value">
               {data.summary.workers_affected}
               {workers && (
-                <span style={{ fontSize: '1rem', color: 'var(--ink-400)', marginLeft: '.4rem' }}>
+                <span style={{ fontSize: '1rem', color: 'var(--text-soft)', marginLeft: '.4rem', fontWeight: 500 }}>
                   / {workers.length}
                 </span>
               )}
             </div>
-            <div className="stat-label">
-              Trabajadores afectados
-              {workers && data.summary.workers_affected > 0 && ` (${affectedPct}%)`}
-            </div>
+            {workers && data.summary.workers_affected > 0 && (
+              <div className="stat-foot">{affectedPct}% del personal</div>
+            )}
           </div>
         </div>
       )}
@@ -267,11 +255,11 @@ export default function LateArrivals() {
                   <tr key={w.worker_id}>
                     <td style={{ fontWeight: 600 }}>{w.worker_name}</td>
                     <td><span className="badge badge-gray">{w.employee_id}</span></td>
-                    <td style={{ fontVariantNumeric: 'tabular-nums' }}>{w.late_count}</td>
+                    <td className="mono">{w.late_count}</td>
                     <td>
                       <span className="badge badge-red">{fmtMinutes(w.total_late_minutes)}</span>
                     </td>
-                    <td style={{ fontVariantNumeric: 'tabular-nums', color: 'var(--ink-500)' }}>
+                    <td className="mono" style={{ color: 'var(--text-muted)' }}>
                       {fmtMinutes(Math.round(w.total_late_minutes / w.late_count))}
                     </td>
                   </tr>
@@ -287,7 +275,7 @@ export default function LateArrivals() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
           <h2 className="section-title" style={{ margin: 0 }}>Detalle de retrasos</h2>
           {isFetching && !isLoading && (
-            <span style={{ fontSize: '.75rem', color: 'var(--ink-400)' }}>Actualizando…</span>
+            <span style={{ fontSize: '.75rem', color: 'var(--text-soft)' }}>Actualizando…</span>
           )}
         </div>
         {data && data.items.length === 0 ? (
@@ -309,12 +297,10 @@ export default function LateArrivals() {
               <tbody>
                 {data.items.map((it) => (
                   <tr key={`${it.date}-${it.worker_id}`}>
-                    <td style={{ color: 'var(--ink-700)' }}>{fmtDate(it.date)}</td>
+                    <td style={{ color: 'var(--text-muted)' }}>{fmtDate(it.date)}</td>
                     <td style={{ fontWeight: 600 }}>{it.worker_name}</td>
                     <td><span className="badge badge-gray">{it.employee_id}</span></td>
-                    <td style={{ fontFamily: 'monospace', fontVariantNumeric: 'tabular-nums' }}>
-                      {it.local_time.slice(0, 5)}
-                    </td>
+                    <td className="mono">{it.local_time.slice(0, 5)}</td>
                     <td>
                       <span className="badge badge-red">+{fmtMinutes(it.late_minutes)}</span>
                     </td>

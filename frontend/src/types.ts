@@ -58,6 +58,28 @@ export interface LateArrivalSummary {
   total_late_events: number
   total_late_minutes: number
   workers_affected: number
+  total_absences: number
+  pending_today_count: number
+}
+
+export interface AbsenceItem {
+  date: string            // YYYY-MM-DD
+  worker_id: string
+  worker_name: string
+  employee_id: string
+}
+
+export interface AbsenceWorkerSummary {
+  worker_id: string
+  worker_name: string
+  employee_id: string
+  absence_count: number
+}
+
+export interface PendingTodayItem {
+  worker_id: string
+  worker_name: string
+  employee_id: string
 }
 
 export interface LateArrivalsReport {
@@ -66,6 +88,9 @@ export interface LateArrivalsReport {
   tz: string
   items: LateArrivalItem[]
   by_worker: LateArrivalWorkerSummary[]
+  absences: AbsenceItem[]
+  absences_by_worker: AbsenceWorkerSummary[]
+  pending_today: PendingTodayItem[]
   summary: LateArrivalSummary
 }
 

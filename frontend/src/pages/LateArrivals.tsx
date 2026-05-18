@@ -115,9 +115,9 @@ export default function LateArrivals() {
 
   return (
     <div>
-      <h1 className="page-title">Retrasos</h1>
+      <h1 className="page-title">Retrasos y faltas</h1>
       <p className="page-subtitle">
-        Quién llega tarde y cuánto. Solo se cuentan las primeras entradas del día por encima de la hora esperada + tolerancia.
+        Quién llega tarde, cuánto, y quién no ha fichado. Las faltas solo se cuentan en días pasados — para hoy se muestran como "pendientes".
       </p>
 
       {/* ── Banner criterio actual ─────────────────────────────────── */}
@@ -136,6 +136,25 @@ export default function LateArrivals() {
           ⚙ Configurar horario
         </Link>
       </div>
+
+      {/* ── Banner pendientes hoy (solo si los hay y hoy está en rango) ── */}
+      {data && data.pending_today.length > 0 && (
+        <div className="banner banner-warning">
+          <div className="banner-content">
+            <div className="banner-eyebrow">Pendientes hoy</div>
+            <div className="banner-main">
+              {data.pending_today.length} trabajador{data.pending_today.length === 1 ? '' : 'es'} aún sin fichar
+            </div>
+            <div className="chip-list">
+              {data.pending_today.map((p) => (
+                <span key={p.worker_id} className="chip" title={`ID ${p.employee_id}`}>
+                  {p.worker_name}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Filtros ───────────────────────────────────────────────── */}
       <div className="card" style={{ marginBottom: '1rem' }}>
@@ -198,13 +217,26 @@ export default function LateArrivals() {
           <div className="stat-card">
             <div className="stat-label">Retrasos detectados</div>
             <div className="stat-value is-brand">{data.summary.total_late_events}</div>
+            {data.summary.total_late_minutes > 0 && (
+              <div className="stat-foot">{fmtMinutes(data.summary.total_late_minutes)} acumulado</div>
+            )}
           </div>
           <div className="stat-card">
-            <div className="stat-label">Tiempo total acumulado</div>
-            <div className="stat-value">{fmtMinutes(data.summary.total_late_minutes)}</div>
+            <div className="stat-label">Faltas</div>
+            <div className="stat-value" style={{ color: data.summary.total_absences > 0 ? 'var(--danger)' : undefined }}>
+              {data.summary.total_absences}
+            </div>
+            <div className="stat-foot">días sin fichar (días pasados)</div>
           </div>
           <div className="stat-card">
-            <div className="stat-label">Trabajadores afectados</div>
+            <div className="stat-label">Pendientes hoy</div>
+            <div className="stat-value" style={{ color: data.summary.pending_today_count > 0 ? 'var(--warning)' : undefined }}>
+              {data.summary.pending_today_count}
+            </div>
+            <div className="stat-foot">aún pueden fichar</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">Trabajadores con retraso</div>
             <div className="stat-value">
               {data.summary.workers_affected}
               {workers && (
@@ -311,6 +343,70 @@ export default function LateArrivals() {
           </div>
         ) : null}
       </div>
+
+      {/* ── Ranking faltas por trabajador ─────────────────────────── */}
+      {data && data.absences_by_worker.length > 0 && (
+        <div className="card" style={{ marginTop: '1rem' }}>
+          <h2 className="section-title">Faltas por trabajador</h2>
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Trabajador</th>
+                  <th>ID</th>
+                  <th style={{ width: 140 }}>Días sin fichar</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.absences_by_worker.map((w) => (
+                  <tr key={w.worker_id}>
+                    <td style={{ fontWeight: 600 }}>{w.worker_name}</td>
+                    <td><span className="badge badge-gray">{w.employee_id}</span></td>
+                    <td>
+                      <span className="badge badge-red">{w.absence_count}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ── Detalle de faltas ─────────────────────────────────────── */}
+      {data && (
+        <div className="card" style={{ marginTop: '1rem' }}>
+          <h2 className="section-title">Detalle de faltas</h2>
+          {data.absences.length === 0 ? (
+            <p className="empty">
+              ✓ Ningún trabajador ha faltado en los días pasados del rango.
+            </p>
+          ) : (
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style={{ width: 180 }}>Fecha</th>
+                    <th>Trabajador</th>
+                    <th style={{ width: 110 }}>ID</th>
+                    <th style={{ width: 100 }}>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.absences.map((a) => (
+                    <tr key={`${a.date}-${a.worker_id}`}>
+                      <td style={{ color: 'var(--text-muted)' }}>{fmtDate(a.date)}</td>
+                      <td style={{ fontWeight: 600 }}>{a.worker_name}</td>
+                      <td><span className="badge badge-gray">{a.employee_id}</span></td>
+                      <td><span className="badge badge-red">Falta</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

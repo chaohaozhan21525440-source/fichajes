@@ -21,10 +21,34 @@ class LateArrivalWorkerSummary(BaseModel):
     total_late_minutes: int
 
 
+class AbsenceItem(BaseModel):
+    """Día pasado en el que un trabajador activo NO tiene ninguna entrada."""
+    date: date
+    worker_id: UUID
+    worker_name: str
+    employee_id: str
+
+
+class AbsenceWorkerSummary(BaseModel):
+    worker_id: UUID
+    worker_name: str
+    employee_id: str
+    absence_count: int
+
+
+class PendingTodayItem(BaseModel):
+    """Trabajador activo que hoy aún no ha fichado (no es falta — solo pendiente)."""
+    worker_id: UUID
+    worker_name: str
+    employee_id: str
+
+
 class LateArrivalSummary(BaseModel):
     total_late_events: int
     total_late_minutes: int
     workers_affected: int
+    total_absences: int
+    pending_today_count: int
 
 
 class LateArrivalsReport(BaseModel):
@@ -33,4 +57,9 @@ class LateArrivalsReport(BaseModel):
     tz: str
     items: list[LateArrivalItem]
     by_worker: list[LateArrivalWorkerSummary]
+    # Faltas: días pasados sin entrada (active workers solamente)
+    absences: list[AbsenceItem]
+    absences_by_worker: list[AbsenceWorkerSummary]
+    # Pendientes hoy: aún pueden fichar
+    pending_today: list[PendingTodayItem]
     summary: LateArrivalSummary

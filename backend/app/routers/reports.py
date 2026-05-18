@@ -21,10 +21,13 @@ from app.models.checkin_record import CheckinRecord
 from app.models.worker import Worker
 from app.routers.settings import read_settings_dict
 from app.schemas.late_arrival import (
+    AbsenceItem,
+    AbsenceWorkerSummary,
     LateArrivalItem,
     LateArrivalSummary,
     LateArrivalWorkerSummary,
     LateArrivalsReport,
+    PendingTodayItem,
 )
 
 router = APIRouter(prefix="/api/v1/reports", tags=["reports"])
@@ -165,10 +168,89 @@ def late_arrivals_report(
     by_worker = [LateArrivalWorkerSummary(**v) for v in by_worker_agg.values()]
     by_worker.sort(key=lambda w: w.total_late_minutes, reverse=True)
 
+    # ── Faltas (días pasados sin entrada) + Pendientes hoy ────────────
+    # Reglas:
+    #   - Solo trabajadores activos
+    #   - Si filtramos por worker_id, restringir a ese
+    #   - Skip días anteriores a worker.created_at (en TZ local) — un
+    #     trabajador recién dado de alta no acumula faltas hacia atrás
+    #   - Faltas: días estrictamente anteriores a HOY (hoy = "pendiente",
+    #     puede aún fichar)
+    #   - Pendientes hoy: solo se calcula si hoy cae dentro del rango
+    today_local = datetime.now(zone).date()
+
+    workers_q = db.query(Worker).filter(Worker.is_active == True)  # noqa: E712
+    if worker_id is not None:
+        workers_q = workers_q.filter(Worker.id == worker_id)
+    active_workers = workers_q.all()
+
+    workers_with_entry: dict[date, set[UUID]] = {}
+    for (local_date, wid), _ in first_entries.items():
+        workers_with_entry.setdefault(local_date, set()).add(wid)
+
+    absences: list[AbsenceItem] = []
+    absences_agg: dict[UUID, dict] = {}
+
+    last_falta_day = min(to_date, today_local - timedelta(days=1))
+    current = from_date
+    while current <= last_falta_day:
+        present_ids = workers_with_entry.get(current, set())
+        for w in active_workers:
+            # No acumular falta a trabajadores creados después del día evaluado
+            created_local_date = w.created_at.astimezone(zone).date()
+            if created_local_date > current:
+                continue
+            if w.id in present_ids:
+                continue
+            absences.append(
+                AbsenceItem(
+                    date=current,
+                    worker_id=w.id,
+                    worker_name=w.full_name,
+                    employee_id=w.employee_id,
+                )
+            )
+            agg = absences_agg.setdefault(
+                w.id,
+                {
+                    "worker_id": w.id,
+                    "worker_name": w.full_name,
+                    "employee_id": w.employee_id,
+                    "absence_count": 0,
+                },
+            )
+            agg["absence_count"] += 1
+        current += timedelta(days=1)
+
+    absences.sort(key=lambda a: (a.date, a.worker_name), reverse=True)
+    absences_by_worker = [AbsenceWorkerSummary(**v) for v in absences_agg.values()]
+    absences_by_worker.sort(key=lambda w: w.absence_count, reverse=True)
+
+    # Pendientes hoy: solo si hoy entra en el rango pedido
+    pending_today: list[PendingTodayItem] = []
+    if from_date <= today_local <= to_date:
+        present_today = workers_with_entry.get(today_local, set())
+        for w in active_workers:
+            created_local_date = w.created_at.astimezone(zone).date()
+            if created_local_date > today_local:
+                continue
+            if w.id in present_today:
+                continue
+            pending_today.append(
+                PendingTodayItem(
+                    worker_id=w.id,
+                    worker_name=w.full_name,
+                    employee_id=w.employee_id,
+                )
+            )
+        pending_today.sort(key=lambda p: p.worker_name)
+
     summary = LateArrivalSummary(
         total_late_events=len(items),
         total_late_minutes=sum(item.late_minutes for item in items),
         workers_affected=len(by_worker_agg),
+        total_absences=len(absences),
+        pending_today_count=len(pending_today),
     )
 
     return LateArrivalsReport(
@@ -177,5 +259,8 @@ def late_arrivals_report(
         tz=tz,
         items=items,
         by_worker=by_worker,
+        absences=absences,
+        absences_by_worker=absences_by_worker,
+        pending_today=pending_today,
         summary=summary,
     )
